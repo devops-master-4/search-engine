@@ -1,0 +1,7 @@
+requests
+configparser
+requests
+flask
+beautifulsoup4
+Pillow 
+pymongo

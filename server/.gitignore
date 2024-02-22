@@ -1,0 +1,13 @@
+venv/
+.vscode/
+__pycache__/
+*.pyc
+*.swp
+*.log
+*.swo
+client_secrets.json
+config.ini
+*.db
+.venv/
+target/
+.idea/
