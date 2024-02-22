@@ -5,6 +5,8 @@ import { axiosInstance } from '../utils/axiosApi'
 import Card from '../ui/Card'
 import PopUpMesage, { MessageProperties } from '../ui/PopUpMesage'
 import Grid from '../ui/Grid'
+import MultiSelect from './Select'
+
 //import { useNavigate } from 'react-router-dom'
 
 const Search = () => {
@@ -15,6 +17,8 @@ const Search = () => {
         type: 'Information',
         message: '',
     })
+
+    const [advanceSearch, setAdvancedSearch] = useState(false)
 
     const hardData: CardProperties[] = [
         {
@@ -76,7 +80,14 @@ const Search = () => {
             .get('https://react-icons.github.io/react-icons/icons/md/')
             .catch()
         console.log(response.data)*/
-        setPopup({ type: 'Success', message: 'request success' })
+        setPopup({
+            type: 'Success',
+            message: 'request success',
+        })
+    }
+
+    const onToggle = () => {
+        setAdvancedSearch(!advanceSearch)
     }
 
     const handleClickCard = (data: CardProperties) => {
@@ -84,12 +95,12 @@ const Search = () => {
     }
 
     useEffect(() => {
-        if (searchValue === '' || searchValue !== '') setPopup(undefined)
-    }, [searchValue])
+        setPopup(undefined)
+    }, [searchValue, advanceSearch])
     const formControl = () => {
         return (
-            <>
-                <div className="max-w-lg lg:mx-auto md:mx-auto xs:m-5">
+            <div className="flex flex-row justify-center content-center  w-full p-3">
+                <div className="inline lg:w-1/2 md:w-1/2  xs:w-full m-3">
                     <label
                         htmlFor="default-search"
                         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -114,31 +125,54 @@ const Search = () => {
                                 />
                             </svg>
                         </div>
+
                         <input
                             onChange={handleTextChange}
                             type="search"
                             id="default-search"
                             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Trouver un livre..."
+                            placeholder={`Trouver un livre...`}
                             required
                         />
+
                         <button
                             onClick={handleSearch}
                             className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            Search
+                            Rechercher
                         </button>
                     </div>
                 </div>
-            </>
+
+                <div className="mt-auto mb-auto inline">
+                    <div>
+                        <input
+                            type="checkbox"
+                            className="peer sr-only opacity-0"
+                            id="toggle"
+                            onChange={onToggle}
+                            checked={advanceSearch}
+                        />
+                        <label
+                            htmlFor="toggle"
+                            className="relative flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-400 px-0.5 outline-gray-400 transition-colors before:h-5 before:w-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300 peer-checked:bg-green-500 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-green-500"
+                        >
+                            <span className="sr-only">Enable</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         )
     }
 
+    const options = ['test1', 'test2', 'test3']
+
     return (
         <>
-            <h1>Moteur de recherche</h1>
             {formControl()}
+            <h1 className="text-left p-5 font-bold text-2xl">Bibliothèque</h1>
             {popUp && <PopUpMesage {...popUp} />}
+            <MultiSelect />
             <Grid>
                 {hardData.map((c) => {
                     return <Card cardProperties={c} key={c.id} />

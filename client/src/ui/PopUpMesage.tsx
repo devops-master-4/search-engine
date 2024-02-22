@@ -23,19 +23,17 @@ const PopUpMesage = (messageProps: MessageProperties | undefined) => {
     return (
         <>
             <div
-                className={`fixed z-50 top-0 left-0 right-0 flex justify-center transition ease-in delay-300 ${!isVisible ? '-translate-y-full ' : 'translate-y-6'}`}
+                className={`fixed z-50 top-0 left-0 right-0 flex justify-center  ${!isVisible ? '-translate-y-full ' : 'translate-y-6'} transition ease-in delay-300`}
             >
                 <div
-                    className={`${messageProps && enumTypeMessage[messageProps.type]} p-4 rounded lg:w-6/12 md:w-6/12 xs:w-full m-auto  relative`}
+                    className={`${messageProps && enumTypeMessage[messageProps.type]} p-4 rounded lg:w-full mx-3 md:w-6/12 xs:w-full m-auto  relative`}
                 >
                     <span className="block sm:inline">
                         {messageProps?.message}
                     </span>
                     <button
                         className="absolute top-0 right-0 px-4 py-3"
-                        onClick={() => {
-                            setIsVisible(false)
-                        }}
+                        onClick={() => setIsVisible(false)}
                     >
                         <svg
                             className="fill-current h-6 w-6 text-red-500"
