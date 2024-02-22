@@ -5,3 +5,5 @@ flask
 beautifulsoup4
 Pillow 
 pymongo
+redis
+scikit-learn
