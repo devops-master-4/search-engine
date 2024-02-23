@@ -7,3 +7,7 @@ Pillow
 pymongo
 redis
 scikit-learn
+flask
+numpy
+pandas
+whoosh
