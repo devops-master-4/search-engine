@@ -8,6 +8,7 @@ import { mockBooks } from '../assets/mockBooks'
 import Dropdown from './components/select'
 import { optionsEnumTranslated } from '../utils/constants'
 import { axiosInstance } from '../utils/axiosApi'
+import Suggestion from './components/Suggestion'
 
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
@@ -156,6 +157,9 @@ const Search = () => {
                     setOptionSelected={setOptionSelected}
                 />
             )}
+            <div className="relative mb-10 ">
+                <Suggestion style={`absolute z-20 top-0 right-10`} />
+            </div>
 
             <Grid>
                 {mockBooks.map((c) => {
