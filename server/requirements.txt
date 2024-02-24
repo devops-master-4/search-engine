@@ -11,3 +11,4 @@ flask
 numpy
 pandas
 whoosh
+bson

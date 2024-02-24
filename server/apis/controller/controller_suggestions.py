@@ -1,5 +1,6 @@
 import pymongo
 import random
+from bson import ObjectId
 
 
 def connect_to_mongo():
@@ -23,7 +24,11 @@ books_collection, _ = connect_to_mongo()
 def get_most_downloaded_books():
     res = list(books_collection.find({}, params).sort(
         "download_count", -1).limit(10))
-    return ["Most downloaded books", res]
+
+    for item in res:  # convert _id to string
+        item["_id"] = str(item["_id"])
+
+    return ["Les plus populaires...", res]
 
 
 # get random books with params for the front end
@@ -32,7 +37,11 @@ def get_random_books():
         {"$sample": {"size": 10}},
         {"$project": params}
     ]))
-    return ["Random books", random_books]
+
+    for item in random_books:  # convert _id to string
+        item["_id"] = str(item["_id"])
+
+    return ["Quelques sélections aléatoires...", random_books]
 
 
 # bookshelves by women bookshelves
@@ -143,7 +152,28 @@ def get_books_by_genre():
     genre_books = list(books_collection.find(
         {"bookshelves": genre}, params).limit(10))
 
-    return [genre, genre_books]
+    for item in genre_books:
+        item["_id"] = str(item["_id"])
+
+    return ["Ce genre pourrait vous intéresser :  " + genre, genre_books]
+
+
+def get_continue_reading(books_id):
+    print("books_id", books_id)
+    res = []
+    for i in range(len(books_id)):
+        # Use find_one to get a single document by ID
+        id = ObjectId(books_id[i])
+        b = books_collection.find_one({"_id": id}, params)
+        res.append(b)
+
+    books = list(res)
+
+    for item in books:
+        if item:
+            item["_id"] = str(item["_id"])
+
+    return ["Reprenez là où vous êtes arrêté...", books]
 
 
 if __name__ == "__main__":
