@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Dispatch, useRef } from 'react'
 
-export type MessageProperties = {
-    type: 'Error' | 'Success' | 'Information'
-    message: string
+type PopUpMessageProperties = {
+    message: MessageProperties | undefined
+    setMessage: Dispatch<MessageProperties | undefined>
 }
 
 const enumTypeMessage = {
@@ -11,26 +11,43 @@ const enumTypeMessage = {
     Information: 'bg-blue-100 border border-blue-400 text-blue-700 ',
 }
 
-const PopUpMesage = (messageProps: MessageProperties | undefined) => {
+const PopUpMessage = ({ message, setMessage }: PopUpMessageProperties) => {
     const [isVisible, setIsVisible] = useState<boolean | undefined>(undefined)
+    const popUp = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (messageProps?.message !== '') {
+        if (message?.message) {
             setIsVisible(true)
         }
-    }, [messageProps])
+    }, [message, setMessage])
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                popUp.current &&
+                !popUp.current.contains((event.target as Node) || null)
+            ) {
+                setIsVisible(false)
+            }
+        }
+
+        document.addEventListener('click', handleClickOutside)
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside)
+        }
+    }, [isVisible])
 
     return (
         <>
             <div
+                ref={popUp}
                 className={`fixed z-50 top-0 left-0 right-0 flex justify-center transition ease-in delay-300 ${!isVisible ? '-translate-y-full ' : 'translate-y-6'}`}
             >
                 <div
-                    className={`${messageProps && enumTypeMessage[messageProps.type]} p-4 rounded lg:w-6/12 md:w-6/12 xs:w-full m-auto  relative`}
+                    className={`${message && enumTypeMessage[message.type]} p-4 rounded lg:w-6/12 md:w-6/12 xs:w-full m-auto  relative`}
                 >
-                    <span className="block sm:inline">
-                        {messageProps?.message}
-                    </span>
+                    <span className="block sm:inline">{message?.message}</span>
                     <button
                         className="absolute top-0 right-0 px-4 py-3"
                         onClick={() => {
@@ -53,4 +70,4 @@ const PopUpMesage = (messageProps: MessageProperties | undefined) => {
     )
 }
 
-export default PopUpMesage
+export default PopUpMessage

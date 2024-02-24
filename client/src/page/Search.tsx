@@ -1,95 +1,85 @@
 import React, { useEffect, useState } from 'react'
 
-import { axiosInstance } from '../utils/axiosApi'
-
 import Card from '../ui/Card'
-import PopUpMesage, { MessageProperties } from '../ui/PopUpMesage'
+import PopUpMessage from '../ui/PopUpMessage'
 import Grid from '../ui/Grid'
-//import { useNavigate } from 'react-router-dom'
+
+import { mockBooks } from '../assets/mockBooks'
+import Dropdown from './components/select'
+import { optionsEnumTranslated } from '../utils/constants'
+import { axiosInstance } from '../utils/axiosApi'
+import Suggestion from './components/Suggestion'
 
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
     //const navigate = useNavigate()
 
-    const [popUp, setPopup] = useState<MessageProperties | undefined>({
-        type: 'Information',
-        message: '',
-    })
+    const [optionSelected, setOptionSelected] = useState<optionSelected[]>([])
 
-    const hardData: CardProperties[] = [
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car',
-            id: 1,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 2,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 3,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 4,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 5,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 6,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 7,
-        },
-        {
-            text: "Plusieurs variations de Lorem Ipsum peuvent être trouvées ici ou là, mais la majeure partie d'entre elles a été altérée par l'addition d'humour ou de mots aléatoires qui ne ressemblent pas une seconde à du texte standard. Si vous voulez utiliser un passage du Lorem Ipsum, vous devez être sûr qu'il n'y a rien d'embarrassant caché dans le texte. Tous les générateurs de Lorem Ipsum sur Internet tendent à reproduire le même extrait sans fin, ce qui fait de lipsum.com le seul vrai générateur de Lorem Ipsum. Iil utilise un dictionnaire de plus de 200 mots latins, en combinaison de plusieurs structures de phrases, pour générer un Lorem Ipsum irréprochable. Le Lorem Ipsum ainsi obtenu ne contient aucune répétition, ni ne contient des mots farfelus, ou des touches d'humour.",
-            image: 'https://media.gqmagazine.fr/photos/606c19c3a813725515a80944/16:9/w_1920,c_limit/mclarenarturaflux-11.jpeg',
-            title: 'My car2',
-            id: 8,
-        },
-    ]
+    const [popUp, setPopup] = useState<MessageProperties | undefined>(undefined)
+
+    const [advanceSearch, setAdvancedSearch] = useState(false)
+
+    const [isFetching, setIsFetching] = useState(false)
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value)
     }
 
-    const handleSearch = async () => {
-        /*const response = await axiosInstance
-            .get('https://react-icons.github.io/react-icons/icons/md/')
-            .catch()
-        console.log(response.data)*/
-        setPopup({ type: 'Success', message: 'request success' })
+    const onToggle = () => {
+        setOptionSelected([])
+        setAdvancedSearch(!advanceSearch)
     }
 
-    const handleClickCard = (data: CardProperties) => {
-        //navigate(`/read/${data.id}`, { state: { data } })
+    const getTranslatedOptions = (): string[] => {
+        const optionsTranslated: string[] = []
+        optionSelected.forEach((option) => {
+            optionsTranslated.push(
+                optionsEnumTranslated[
+                    option.name as keyof OptionsEnumTranslated
+                ]
+            )
+        })
+        return optionsTranslated
     }
 
     useEffect(() => {
-        if (searchValue === '' || searchValue !== '') setPopup(undefined)
-    }, [searchValue])
+        const handleSearch = async () => {
+            if (searchValue === '') {
+                setIsFetching(false)
+                return setPopup({
+                    type: 'Error',
+                    message: 'Le champs de recherche ne peut pas être vide',
+                })
+            }
+
+            const response = await axiosInstance
+                .get('https://react-icons.github.io/react-icons/icons/md/')
+                .catch(() => {
+                    setIsFetching(false)
+                })
+
+            if (response) {
+                setTimeout(() => {
+                    setIsFetching(false)
+                }, 3000)
+            }
+
+            const body = {
+                value: searchValue as string,
+                options: getTranslatedOptions() as string[],
+            }
+
+            console.log(JSON.stringify(body))
+        }
+
+        if (isFetching) handleSearch()
+    }, [getTranslatedOptions, isFetching, searchValue])
+
     const formControl = () => {
         return (
-            <>
-                <div className="max-w-lg lg:mx-auto md:mx-auto xs:m-5">
+            <div className="flex flex-row justify-center content-center  w-full p-3">
+                <div className="inline lg:w-1/2 md:w-1/2  xs:w-full m-3">
                     <label
                         htmlFor="default-search"
                         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -107,13 +97,14 @@ const Search = () => {
                             >
                                 <path
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                                 />
                             </svg>
                         </div>
+
                         <input
                             onChange={handleTextChange}
                             type="search"
@@ -121,16 +112,37 @@ const Search = () => {
                             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Trouver un livre..."
                             required
+                            value={searchValue}
                         />
+
                         <button
-                            onClick={handleSearch}
+                            onClick={() => setIsFetching(true)}
+                            disabled={isFetching}
                             className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            Search
+                            Recherche
                         </button>
                     </div>
                 </div>
-            </>
+
+                <div className="mt-auto mb-auto inline">
+                    <div>
+                        <input
+                            type="checkbox"
+                            className="peer sr-only opacity-0"
+                            id="toggle"
+                            onChange={onToggle}
+                            checked={advanceSearch}
+                        />
+                        <label
+                            htmlFor="toggle"
+                            className="relative flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-400 px-0.5 outline-gray-400 transition-colors before:h-5 before:w-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300 peer-checked:bg-green-500 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-green-500"
+                        >
+                            <span className="sr-only">Enable</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         )
     }
 
@@ -138,9 +150,19 @@ const Search = () => {
         <>
             <h1>Moteur de recherche</h1>
             {formControl()}
-            {popUp && <PopUpMesage {...popUp} />}
+            {popUp && <PopUpMessage setMessage={setPopup} message={popUp} />}
+            {advanceSearch && (
+                <Dropdown
+                    optionSelected={optionSelected}
+                    setOptionSelected={setOptionSelected}
+                />
+            )}
+            <div className="relative mb-10 ">
+                <Suggestion style={`absolute z-20 top-0 right-10`} />
+            </div>
+
             <Grid>
-                {hardData.map((c) => {
+                {mockBooks.map((c) => {
                     return <Card cardProperties={c} key={c.id} />
                 })}
             </Grid>

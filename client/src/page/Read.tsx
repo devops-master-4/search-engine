@@ -7,7 +7,7 @@ const Read = () => {
     const location = useLocation()
     const { id } = useParams()
     const navigate = useNavigate()
-    const data = (location.state as CardProperties) || null
+    const data = (location.state as BookProperties) || null
     const [loc, setLoc] = useState<string | number>(0)
 
     useEffect(() => {
