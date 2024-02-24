@@ -3,11 +3,12 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom'
 import { axiosInstance } from '../utils/axiosApi'
 import { AxiosResponse } from 'axios'
 import { ReactReader } from 'react-reader'
+import { BookProperties } from '../types/search'
 const Read = () => {
     const location = useLocation()
     const { id } = useParams()
     const navigate = useNavigate()
-    const data = (location.state as CardProperties) || null
+    const data = (location.state as BookProperties) || null
     const [loc, setLoc] = useState<string | number>(0)
 
     useEffect(() => {
