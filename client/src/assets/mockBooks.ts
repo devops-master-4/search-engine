@@ -1,5 +1,3 @@
-import { BookProperties } from '../types/search'
-
 export const mockBooks: BookProperties[] = [
     {
         id: 1,

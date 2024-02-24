@@ -3,7 +3,6 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom'
 import { axiosInstance } from '../utils/axiosApi'
 import { AxiosResponse } from 'axios'
 import { ReactReader } from 'react-reader'
-import { BookProperties } from '../types/search'
 const Read = () => {
     const location = useLocation()
     const { id } = useParams()

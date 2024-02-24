@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { BookProperties } from '../types/search'
 
 const Card = ({ cardProperties }: { cardProperties: BookProperties }) => {
     const navigate = useNavigate()

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Card from '../ui/Card'
 import PopUpMessage from '../ui/PopUpMessage'
 import Grid from '../ui/Grid'
-import { optionSelected, OptionsEnumTranslated } from '../types/search'
+
 import { mockBooks } from '../assets/mockBooks'
 import Dropdown from './components/select'
 import { optionsEnumTranslated } from '../utils/constants'
@@ -26,6 +26,7 @@ const Search = () => {
     }
 
     const onToggle = () => {
+        setOptionSelected([])
         setAdvancedSearch(!advanceSearch)
     }
 

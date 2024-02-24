@@ -1,4 +1,4 @@
-export type BookProperties = {
+type BookProperties = {
     id: number
     bookCover: string // url of image covers
     title: string
@@ -7,8 +7,7 @@ export type BookProperties = {
     bookshelves: string[] //genre
     languages: string[]
 }
-
-export type optionSelected = {
+type optionSelected = {
     name: string
     selected: boolean
 }

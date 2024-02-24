@@ -1,5 +1,3 @@
-import { optionSelected, OptionsEnumTranslated } from '../types/search'
-
 export const optionsEnumTranslated: OptionsEnumTranslated = {
     auteurs: 'authors',
     themes: 'subjects',

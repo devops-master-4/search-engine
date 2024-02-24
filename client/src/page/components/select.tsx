@@ -1,5 +1,4 @@
 import React, { Dispatch, useEffect, useRef, useState } from 'react'
-import { optionSelected } from '../../types/search'
 import { initialOptions } from '../../utils/constants'
 
 type optionsProperties = {
@@ -57,6 +56,11 @@ const Dropdown = ({ optionSelected, setOptionSelected }: optionsProperties) => {
             document.removeEventListener('click', handleClickOutside)
         }
     }, [isOpen])
+
+    useEffect(() => {
+        if (optionSelected.length <= 0)
+            initialOptions.forEach((option) => (option.selected = false))
+    }, [optionSelected, setOptionSelected])
 
     return (
         <div
