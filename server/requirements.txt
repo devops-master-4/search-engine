@@ -5,3 +5,10 @@ flask
 beautifulsoup4
 Pillow 
 pymongo
+redis
+scikit-learn
+flask
+numpy
+pandas
+whoosh
+bson

@@ -1,27 +1,26 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-#ide
-.idea
-
-
-# dependencies
-*node_modules/
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+venv/
+.vscode/
+__pycache__/
+*.pyc
+*.swp
+*.log
+*.swo
+client_secrets.json
+config.ini
+*.db
+.venv/
+target/
+.idea/
+build/
+node_modules/
+.env
+*.rdb
+tailwind-css-sidebar.zip
+*.epub
+*.zip
+index.html
+main.js
+style.css
+books.js
+*.jpg
+whoosh_index/
