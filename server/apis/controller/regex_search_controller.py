@@ -15,14 +15,35 @@ params = {
 
 
 def regex_search(params):
-    query = {}
+    # {"value":"ddd","options":["languages","authors","title","subjects"]}
 
-    for key, value in params.items():
-        if value:
-            query[key] = {"$regex": value, "$options": "i"}
+    # search_result = books_collection.find(
+    #     {
+    #         "$or": [
+    #             {"title": {"$regex": params["title"], "$options": "i"}},
+    #             {"authors": {"$regex": params["authors"], "$options": "i"}},
+    #             {"subjects": {"$regex": params["subjects"], "$options": "i"}},
+    #             {"languages": {"$regex": params["languages"], "$options": "i"}},
+    #         ]
+    #     },
+    #     params,
+    # )
 
-    res = list(books_collection.find(query, params).limit(10))
-    return ["Regex search", res]
+    options = params["options"]
+    value = params["value"]
+    print(options, value)
+
+    for option in options:
+        search_result = books_collection.find(
+            {
+                option: {"$regex": value, "$options": "i"}
+            },
+            params,
+        )
+        if search_result.count() > 0:
+            break
+
+    return list(search_result)
 
 
 if __name__ == "__main__":

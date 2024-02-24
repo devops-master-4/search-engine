@@ -1,6 +1,7 @@
 import pymongo
 import random
 from bson import ObjectId
+import pathlib
 
 
 def connect_to_mongo():
@@ -27,7 +28,13 @@ def get_most_downloaded_books():
 
     for item in res:  # convert _id to string
         item["_id"] = str(item["_id"])
+        cover_path = pathlib.Path(
+            __file__).parent.parent
 
+        if cover_path.exists():
+            cover_path = str(cover_path) + "/assets/covers/" + \
+                item["_id"] + ".jpg"
+            item['covers'] = cover_path
     return ["Les plus populaires...", res]
 
 
