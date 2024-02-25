@@ -53,7 +53,7 @@ def main():
 
     writer = ix.writer()
 
-    for book in books_collection.find():
+    for book in books_collection.find().limit(10):
         authors_name = ", ".join(author["name"]
                                  for author in book.get("authors", []))
         subjects = ", ".join(book.get("subjects", []))

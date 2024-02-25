@@ -32,7 +32,8 @@ def download_epub():
         with open(download_path, "wb") as f:
             f.write(file)
             print("downloaded")
-        return send_file(download_path, as_attachment=True, download_name=f"{book_id}.epub")
+        return send_file(download_path, as_attachment=True, download_name=f"{book_id}.epub",mimetype='application/epub+zip')
+
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
