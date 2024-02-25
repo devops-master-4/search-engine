@@ -1,10 +1,10 @@
 type BookProperties = {
+    _id: string
     id: number
     bookCover: string // url of image covers
     title: string
     authors: string[]
     subjects: string[] // theme du livre
-    bookshelves: string[] //genre
     languages: string[]
 }
 type optionSelected = {
@@ -12,16 +12,10 @@ type optionSelected = {
     selected: boolean
 }
 
-type OptionsEnum =
-    | 'authors'
-    | 'subjects'
-    | 'bookshelves'
-    | 'title'
-    | 'languages'
+type OptionsEnum = 'authors.name' | 'subjects' | 'title' | 'languages'
 
 type OptionsEnumTranslated = {
     auteurs: OptionsEnum
-    themes: OptionsEnum
     genres: OptionsEnum
     titre: OptionsEnum
     langues: OptionsEnum

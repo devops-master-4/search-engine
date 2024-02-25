@@ -4,7 +4,7 @@ const Card = ({ cardProperties }: { cardProperties: BookProperties }) => {
     const navigate = useNavigate()
 
     const handleNavigate = () => {
-        navigate('/read/' + cardProperties.id, {
+        navigate('/read/' + cardProperties._id, {
             state: cardProperties,
         })
     }

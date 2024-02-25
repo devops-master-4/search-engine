@@ -1,7 +1,6 @@
 export const optionsEnumTranslated: OptionsEnumTranslated = {
-    auteurs: 'authors',
-    themes: 'subjects',
-    genres: 'bookshelves',
+    auteurs: 'authors.name',
+    genres: 'subjects',
     titre: 'title',
     langues: 'languages',
 }
@@ -9,10 +8,6 @@ export const optionsEnumTranslated: OptionsEnumTranslated = {
 export const initialOptions: optionSelected[] = [
     {
         name: 'langues',
-        selected: false,
-    },
-    {
-        name: 'themes',
         selected: false,
     },
     {

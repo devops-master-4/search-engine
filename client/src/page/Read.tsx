@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useParams, useNavigate } from 'react-router-dom'
-import { axiosInstance } from '../utils/axiosApi'
-import { AxiosResponse } from 'axios'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactReader } from 'react-reader'
+import { toast, ToastContainer } from 'react-toastify'
+
 const Read = () => {
     const location = useLocation()
     const { id } = useParams()
     const navigate = useNavigate()
     const data = (location.state as BookProperties) || null
     const [loc, setLoc] = useState<string | number>(0)
+    const [error, setError] = useState<string>('')
 
     useEffect(() => {
         if (!data) {
@@ -16,29 +17,47 @@ const Read = () => {
         }
     }, [data, navigate])
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosInstance.get(
-                    `http://localhost:8080/api/ebooks/1669`,
-                    {
-                        responseType: 'blob',
-                    }
-                )
+    const requestMethod = async (
+        url: string,
+        type: string,
+        withCredentials: boolean,
+        headers: Headers | undefined
+    ): Promise<object> => {
+        const requestOptions = new Headers()
+        requestOptions.append('no-cors', 'true')
 
-                const blob = new Blob([response.data])
-                const url = URL.createObjectURL(blob)
-
-                console.log(url)
-            } catch (error) {
-                console.error('Error fetching ebook:', error)
-            }
+        const requestOptionsObject: RequestInit = {
+            method: type,
+            headers: requestOptions,
+            credentials: withCredentials
+                ? 'include'
+                : ('same-origin' as RequestCredentials),
         }
 
-        //fetchData()
-    }, [])
+        try {
+            const response = await fetch(url, requestOptionsObject)
+
+            if (response.status >= 400)
+                setError("Une erreur s'est produite lors de la requête!")
+
+            return await response.blob()
+        } catch (error) {
+            setError("Une erreur s'est produite lors de la requête!")
+        }
+
+        return {}
+    }
+
+    useEffect(() => {
+        if (error !== '') {
+            toast.error(error)
+        }
+
+        return
+    }, [error])
 
     const loadingEpub = () => {
+        if (error !== '') return null
         return (
             <div className="flex items-center space-x-2 justify-center content-center w-full h-screen font-bold">
                 <div aria-label="Loading..." role="status">
@@ -47,10 +66,10 @@ const Read = () => {
                         height="48"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="1.5"
+                        strokeWidth="1.5"
                         viewBox="0 0 24 24"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         xmlns="http://www.w3.org/2000/svg"
                         className="animate-spin w-3/5 h-4/5 stroke-slate-500"
                     >
@@ -68,9 +87,11 @@ const Read = () => {
         <>
             <div className="h-screen">
                 <ReactReader
-                    url={'http://localhost:8080/api/ebooks/' + id}
+                    url={`http://localhost:5000/download_epub?book_id=${id}`}
                     epubInitOptions={{
                         openAs: 'epub',
+                        requestMethod: (url, type, withCredentials, headers) =>
+                            requestMethod(url, 'GET', false, undefined),
                     }}
                     location={loc}
                     showToc={true}
@@ -79,6 +100,7 @@ const Read = () => {
                     swipeable={true}
                 />
             </div>
+            <ToastContainer position="top-right" />
         </>
     )
 }

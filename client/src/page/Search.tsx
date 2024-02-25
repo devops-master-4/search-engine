@@ -8,7 +8,9 @@ import { mockBooks } from '../assets/mockBooks'
 import Dropdown from './components/select'
 import { optionsEnumTranslated } from '../utils/constants'
 import { axiosInstance } from '../utils/axiosApi'
-import Suggestion from './components/Suggestion'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
@@ -54,7 +56,7 @@ const Search = () => {
             }
 
             const response = await axiosInstance
-                .get('https://react-icons.github.io/react-icons/icons/md/')
+                .get('localhost:5000/search?query=' + searchValue)
                 .catch(() => {
                     setIsFetching(false)
                 })
@@ -66,7 +68,7 @@ const Search = () => {
             }
 
             const body = {
-                value: searchValue as string,
+                title: searchValue as string,
                 options: getTranslatedOptions() as string[],
             }
 
@@ -75,6 +77,10 @@ const Search = () => {
 
         if (isFetching) handleSearch()
     }, [getTranslatedOptions, isFetching, searchValue])
+
+    useEffect(() => {
+        if (advanceSearch) toast.error('Regex activé!')
+    }, [advanceSearch])
 
     const formControl = () => {
         return (
@@ -148,24 +154,26 @@ const Search = () => {
 
     return (
         <>
-            <h1>Moteur de recherche</h1>
-            {formControl()}
-            {popUp && <PopUpMessage setMessage={setPopup} message={popUp} />}
-            {advanceSearch && (
-                <Dropdown
-                    optionSelected={optionSelected}
-                    setOptionSelected={setOptionSelected}
-                />
-            )}
-            <div className="relative mb-10 ">
-                <Suggestion style={`absolute z-20 top-0 right-10`} />
-            </div>
+            <div className="relative ">
+                <h1>Moteur de recherche</h1>
+                {formControl()}
 
-            <Grid>
-                {mockBooks.map((c) => {
-                    return <Card cardProperties={c} key={c.id} />
-                })}
-            </Grid>
+                <PopUpMessage setMessage={setPopup} message={popUp} />
+
+                {advanceSearch && (
+                    <Dropdown
+                        optionSelected={optionSelected}
+                        setOptionSelected={setOptionSelected}
+                    />
+                )}
+
+                <Grid>
+                    {mockBooks.map((c) => {
+                        return <Card cardProperties={c} key={c.id} />
+                    })}
+                </Grid>
+            </div>
+            <ToastContainer position="bottom-right" />
         </>
     )
 }
