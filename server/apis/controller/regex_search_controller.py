@@ -11,6 +11,7 @@ params = {
     "title": 1,
     "authors": 1,
     "download_count": 1,
+    "formats":1
 }
 
 
@@ -43,7 +44,9 @@ def regex_search(params):
         if search_result.count() > 0:
             break
 
-    return list(search_result)
+    data =  ['Résultats de la recherche...', list(search_result)]
+
+    return list(data)
 
 
 if __name__ == "__main__":

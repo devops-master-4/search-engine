@@ -4,6 +4,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.qparser import QueryParser
 from whoosh.analysis import SimpleAnalyzer
 import pymongo
+import pathlib
 
 
 def connect_to_mongo():
@@ -29,7 +30,8 @@ def main():
         content=TEXT(analyzer=SimpleAnalyzer(), stored=True),
     )
 
-    index_dir = "whoosh_index"
+    index_dir = pathlib.Path(
+           __file__).parent.parent.parent.parent / "whoosh_index"
 
     if not os.path.exists(index_dir):
         print("Creating index directory")
@@ -53,7 +55,7 @@ def main():
 
     writer = ix.writer()
 
-    for book in books_collection.find().limit(10):
+    for book in books_collection.find():
         authors_name = ", ".join(author["name"]
                                  for author in book.get("authors", []))
         subjects = ", ".join(book.get("subjects", []))

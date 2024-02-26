@@ -40,12 +40,13 @@ def regex_search():
         }
 
         result = list(books_collection.find(
-            query, {"_id": 1, "title": 1, "authors": 1, "download_count": 1}).limit(10))
+            query, {"_id": 1, "title": 1, "authors": 1, "download_count": 1,"formats":1}).limit(10))
 
         for res in result:
             res["_id"] = str(res["_id"])
 
         print("query", result)
-        return jsonify({"status": "success", "data": result})
+        data = ['Résultats de la recherche...', result]
+        return jsonify({"status": "success", "data": data})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})

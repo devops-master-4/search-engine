@@ -54,6 +54,7 @@ export const fetchBooks = async (
         if (response.data.status === 'success') {
             const booksData =
                 response.data.data.length > 0 && response.data.data[1]
+            const themeUser = response.data.data[0]
 
             booksData.forEach((book: any) => {
                 const cover =
@@ -64,6 +65,7 @@ export const fetchBooks = async (
                     covers: cover,
                     authors: book.authors,
                     title: book.title,
+                    theme: themeUser,
                 } as BookProperties)
             })
         }

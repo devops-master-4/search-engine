@@ -36,6 +36,14 @@ const Search = () => {
         null
     )
 
+    const [booksByGenre, setBooksByGenre] = useState<BookProperties[] | null>(
+        null
+    )
+
+    const [continueReading, setContinueReading] = useState<
+        BookProperties[] | null
+    >(null)
+
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value)
     }
@@ -116,6 +124,26 @@ const Search = () => {
         }
 
         fetch().catch(/**/)
+    }, [])
+
+    useEffect(() => {
+        const fetchReading = async () => {
+            const response = await fetchBooks(
+                'continue_reading?book_id=' + userBooks
+            )
+
+            setContinueReading(response)
+        }
+
+        if (userBooks && continueReading === null) fetchReading().catch(/***/)
+    }, [continueReading, userBooks])
+
+    useEffect(() => {
+        const fetchBooksByGenre = async () => {
+            const response = await fetchBooks('books_by_genre')
+            setBooksByGenre(response)
+        }
+        fetchBooksByGenre().catch(/**/)
     }, [])
 
     const formControl = () => {
@@ -207,18 +235,23 @@ const Search = () => {
                         <h3 className="text-left pl-10 font-bold text-xl">
                             Résultat de votre recherche
                         </h3>
-                        <Grid>
-                            {bookSearched &&
-                                bookSearched.map((c) => {
-                                    return (
-                                        <Card cardProperties={c} key={c._id} />
-                                    )
-                                })}
-                        </Grid>
+
                         {/* Empty results*/}
                         {isFetching && <Loader />}
                         {!isFetching && (
                             <>
+                                <Grid>
+                                    {bookSearched &&
+                                        bookSearched.map((c) => {
+                                            return (
+                                                <Card
+                                                    cardProperties={c}
+                                                    key={c._id}
+                                                />
+                                            )
+                                        })}
+                                </Grid>
+
                                 {bookSearched && bookSearched.length === 0 && (
                                     <div>
                                         <h4>
@@ -247,10 +280,23 @@ const Search = () => {
                 {/* Suggestions to users based on his previous reading or random books suggested*/}
                 <div className="mt-10">
                     <h3 className="text-left pl-10 font-bold text-xl">
-                        Ce qui pourrais vous intéresser
+                        {suggestions && suggestions[0].theme}
                     </h3>
                     <Grid>
                         {suggestions?.map((c) => {
+                            return <Card cardProperties={c} key={c._id} />
+                        })}
+                    </Grid>
+                </div>
+
+                {/* Random  book by subjects */}
+                <div className="mt-10">
+                    <h3 className="text-left pl-10 font-bold text-xl">
+                        {booksByGenre && booksByGenre[0].theme}
+                    </h3>
+
+                    <Grid>
+                        {booksByGenre?.map((c) => {
                             return <Card cardProperties={c} key={c._id} />
                         })}
                     </Grid>
@@ -261,7 +307,13 @@ const Search = () => {
                     <h3 className="text-left pl-10 font-bold text-xl">
                         Continuer la lecture
                     </h3>
-                    {!!userBooks && <Grid>Votre lecture</Grid>}
+                    {!!userBooks && (
+                        <Grid>
+                            {continueReading?.map((c) => {
+                                return <Card cardProperties={c} key={c._id} />
+                            })}
+                        </Grid>
+                    )}
                     {!userBooks && (
                         <p className="pt-20">Vous n'avez encore rien lu..</p>
                     )}

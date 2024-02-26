@@ -6,6 +6,7 @@ type BookProperties = {
     subjects?: string[] // theme du livre
     languages?: string[]
     download_count: number
+    theme?: string
 }
 
 type optionSelected = {

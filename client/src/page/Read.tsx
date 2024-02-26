@@ -61,6 +61,17 @@ const Read = () => {
 
     const loadingEpub = () => {
         if (error !== '') return null
+        let userBooks = localStorage.getItem('user_books')
+
+        if (!userBooks) {
+            localStorage.setItem('user_books', id as string)
+        } else {
+            if (!userBooks.split(',').includes(id as string)) {
+                userBooks += (',' + id) as string
+                localStorage.setItem('user_books', userBooks)
+            }
+        }
+
         return <Loader />
     }
 

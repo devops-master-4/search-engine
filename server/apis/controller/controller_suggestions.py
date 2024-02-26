@@ -17,6 +17,7 @@ params = {
     "title": 1,
     "authors": 1,
     "download_count": 1,
+    "formats":1
 }
 
 books_collection, _ = connect_to_mongo()
