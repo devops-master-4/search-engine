@@ -14,13 +14,14 @@ const Card = ({ cardProperties }: { cardProperties: BookProperties }) => {
             className=" flex items-center justify-center cursor-pointer"
             onClick={() => handleNavigate()}
         >
-            <div className="bg-white  overflow-hidden shadow-xl hover:scale-105 hover:shadow-2xl transform duration-500 cursor-pointer">
-                <div className="relative lg:h-80 h-96">
+            <div className="bg-white w-80 overflow-hidden shadow-xl hover:scale-105 hover:shadow-2xl transform duration-500 cursor-pointer">
+                <div className="relative  lg:h-100 xs:h-96 ">
                     <img
                         className="w-full  h-3/4"
-                        src={cardProperties.bookCover}
+                        src={cardProperties.covers}
+                        alt={cardProperties.title}
                     />
-                    <p className="w-full h-1/4     m-auto text-black p-3 text-center">
+                    <p className="w-full h-auto m-auto  pl-1 pr-1 text-black  text-center">
                         {cardProperties.title}
                     </p>
                 </div>

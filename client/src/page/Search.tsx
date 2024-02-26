@@ -4,17 +4,17 @@ import Card from '../ui/Card'
 import PopUpMessage from '../ui/PopUpMessage'
 import Grid from '../ui/Grid'
 
-import { mockBooks } from '../assets/mockBooks'
 import Dropdown from './components/select'
-import { optionsEnumTranslated } from '../utils/constants'
-import { axiosInstance } from '../utils/axiosApi'
+import { fetchBooks, optionsEnumTranslated } from '../utils/constants'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Loader from '../ui/loader'
 
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
     //const navigate = useNavigate()
+    const userBooks: any = localStorage.getItem('user_books')
 
     const [optionSelected, setOptionSelected] = useState<optionSelected[]>([])
 
@@ -23,6 +23,18 @@ const Search = () => {
     const [advanceSearch, setAdvancedSearch] = useState(false)
 
     const [isFetching, setIsFetching] = useState(false)
+
+    const [bookSearched, setSearchedBook] = useState<BookProperties[] | null>(
+        null
+    )
+
+    const [mostDownloaded, setMostDownloaded] = useState<
+        BookProperties[] | null
+    >(null)
+
+    const [suggestions, setSuggestions] = useState<BookProperties[] | null>(
+        null
+    )
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value)
@@ -33,54 +45,78 @@ const Search = () => {
         setAdvancedSearch(!advanceSearch)
     }
 
-    const getTranslatedOptions = (): string[] => {
-        const optionsTranslated: string[] = []
-        optionSelected.forEach((option) => {
-            optionsTranslated.push(
-                optionsEnumTranslated[
-                    option.name as keyof OptionsEnumTranslated
-                ]
-            )
-        })
-        return optionsTranslated
-    }
-
     useEffect(() => {
+        const getTranslatedOptions = (): string[] => {
+            const optionsTranslated: string[] = []
+            optionSelected.forEach((option) => {
+                optionsTranslated.push(
+                    optionsEnumTranslated[
+                        option.name as keyof OptionsEnumTranslated
+                    ]
+                )
+            })
+            return optionsTranslated
+        }
+
+        const simpleSearch = async () => {
+            const response = await fetchBooks('search?query=' + searchValue)
+
+            if (!response) {
+                setIsFetching(false)
+            }
+
+            if (response) {
+                setSearchedBook(response)
+                setIsFetching(false)
+            }
+        }
+
+        const advancedSearch = async () => {
+            const data = {
+                value: searchValue,
+                options: getTranslatedOptions(),
+            }
+
+            const response = await fetchBooks('regex_search', 'POST', data)
+
+            if (!response) {
+                setIsFetching(false)
+            }
+
+            if (response) {
+                setSearchedBook(response)
+                setIsFetching(false)
+            }
+        }
+
         const handleSearch = async () => {
             if (searchValue === '') {
                 setIsFetching(false)
-                return setPopup({
-                    type: 'Error',
-                    message: 'Le champs de recherche ne peut pas être vide',
-                })
+                toast.error('La recherche ne peut pas être vide')
             }
 
-            const response = await axiosInstance
-                .get('localhost:5000/search?query=' + searchValue)
-                .catch(() => {
-                    setIsFetching(false)
-                })
-
-            if (response) {
-                setTimeout(() => {
-                    setIsFetching(false)
-                }, 3000)
+            if (optionSelected.length > 0) {
+                return await advancedSearch()
             }
 
-            const body = {
-                title: searchValue as string,
-                options: getTranslatedOptions() as string[],
-            }
-
-            console.log(JSON.stringify(body))
+            return await simpleSearch()
         }
 
-        if (isFetching) handleSearch()
-    }, [getTranslatedOptions, isFetching, searchValue])
+        if (isFetching) handleSearch().catch(/**/)
+    }, [isFetching, optionSelected, searchValue])
 
     useEffect(() => {
         if (advanceSearch) toast.error('Regex activé!')
     }, [advanceSearch])
+
+    useEffect(() => {
+        const fetch = async () => {
+            setSuggestions(await fetchBooks('random_books'))
+            setMostDownloaded(await fetchBooks('most_downloaded'))
+        }
+
+        fetch().catch(/**/)
+    }, [])
 
     const formControl = () => {
         return (
@@ -155,7 +191,6 @@ const Search = () => {
     return (
         <>
             <div className="relative ">
-                <h1>Moteur de recherche</h1>
                 {formControl()}
 
                 <PopUpMessage setMessage={setPopup} message={popUp} />
@@ -167,11 +202,70 @@ const Search = () => {
                     />
                 )}
 
-                <Grid>
-                    {mockBooks.map((c) => {
-                        return <Card cardProperties={c} key={c.id} />
-                    })}
-                </Grid>
+                {bookSearched && (
+                    <div className="mt-10">
+                        <h3 className="text-left pl-10 font-bold text-xl">
+                            Résultat de votre recherche
+                        </h3>
+                        <Grid>
+                            {bookSearched &&
+                                bookSearched.map((c) => {
+                                    return (
+                                        <Card cardProperties={c} key={c._id} />
+                                    )
+                                })}
+                        </Grid>
+                        {/* Empty results*/}
+                        {isFetching && <Loader />}
+                        {!isFetching && (
+                            <>
+                                {bookSearched && bookSearched.length === 0 && (
+                                    <div>
+                                        <h4>
+                                            Aucun résultat... essayez la
+                                            recherche avancée
+                                        </h4>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
+
+                {/* Most popular books*/}
+                <div className="mt-10">
+                    <h3 className="text-left pl-10 font-bold text-xl">
+                        Les plus populaires
+                    </h3>
+                    <Grid>
+                        {mostDownloaded?.map((c) => {
+                            return <Card cardProperties={c} key={c._id} />
+                        })}
+                    </Grid>
+                </div>
+
+                {/* Suggestions to users based on his previous reading or random books suggested*/}
+                <div className="mt-10">
+                    <h3 className="text-left pl-10 font-bold text-xl">
+                        Ce qui pourrais vous intéresser
+                    </h3>
+                    <Grid>
+                        {suggestions?.map((c) => {
+                            return <Card cardProperties={c} key={c._id} />
+                        })}
+                    </Grid>
+                </div>
+
+                {/* What user has read */}
+                <div className="mt-10">
+                    <h3 className="text-left pl-10 font-bold text-xl">
+                        Continuer la lecture
+                    </h3>
+                    {!!userBooks && <Grid>Votre lecture</Grid>}
+                    {!userBooks && (
+                        <p className="pt-20">Vous n'avez encore rien lu..</p>
+                    )}
+                </div>
             </div>
             <ToastContainer position="bottom-right" />
         </>

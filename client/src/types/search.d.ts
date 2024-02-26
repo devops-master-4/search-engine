@@ -1,12 +1,13 @@
 type BookProperties = {
     _id: string
-    id: number
-    bookCover: string // url of image covers
+    covers: string // url of image covers
     title: string
-    authors: string[]
-    subjects: string[] // theme du livre
-    languages: string[]
+    authors?: string[]
+    subjects?: string[] // theme du livre
+    languages?: string[]
+    download_count: number
 }
+
 type optionSelected = {
     name: string
     selected: boolean
