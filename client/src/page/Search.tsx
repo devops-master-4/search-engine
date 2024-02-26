@@ -100,7 +100,7 @@ const Search = () => {
         const handleSearch = async () => {
             if (searchValue === '') {
                 setIsFetching(false)
-                toast.error('La recherche ne peut pas être vide')
+                return toast.error('La recherche ne peut pas être vide')
             }
 
             if (optionSelected.length > 0) {
@@ -236,7 +236,6 @@ const Search = () => {
                             Résultat de votre recherche
                         </h3>
 
-                        {/* Empty results*/}
                         {isFetching && <Loader />}
                         {!isFetching && (
                             <>
@@ -252,6 +251,7 @@ const Search = () => {
                                         })}
                                 </Grid>
 
+                                {/* Empty results*/}
                                 {bookSearched && bookSearched.length === 0 && (
                                     <div>
                                         <h4>
