@@ -1,7 +1,7 @@
 # search with regex
-import pymongo
-import pathlib
+import redis
 from controller_suggestions import connect_to_mongo
+import json
 
 books_collection, _ = connect_to_mongo()
 
@@ -11,28 +11,21 @@ params = {
     "title": 1,
     "authors": 1,
     "download_count": 1,
-    "formats":1
+    "formats": 1
 }
+
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 def regex_search(params):
-    # {"value":"ddd","options":["languages","authors","title","subjects"]}
-
-    # search_result = books_collection.find(
-    #     {
-    #         "$or": [
-    #             {"title": {"$regex": params["title"], "$options": "i"}},
-    #             {"authors": {"$regex": params["authors"], "$options": "i"}},
-    #             {"subjects": {"$regex": params["subjects"], "$options": "i"}},
-    #             {"languages": {"$regex": params["languages"], "$options": "i"}},
-    #         ]
-    #     },
-    #     params,
-    # )
 
     options = params["options"]
     value = params["value"]
     print(options, value)
+
+    if r.exists(value):
+        print("query found in cache")
+        return json.loads(r.get(value))
 
     for option in options:
         search_result = books_collection.find(
@@ -44,8 +37,9 @@ def regex_search(params):
         if search_result.count() > 0:
             break
 
-    data =  ['Résultats de la recherche...', list(search_result)]
+    data = ['Résultats de la recherche...', list(search_result)]
 
+    r.set(value, json.dumps(data))
     return list(data)
 
 

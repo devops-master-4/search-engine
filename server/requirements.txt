@@ -1,4 +1,4 @@
-    requests
+requests
 configparser
 requests
 flask
@@ -12,3 +12,4 @@ numpy
 pandas
 whoosh
 flask-cors
+numpy

@@ -3,6 +3,8 @@ from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
 from whoosh.scoring import TF_IDF
 import pathlib
+import json
+import redis
 
 
 def connect_to_mongo():
@@ -18,17 +20,27 @@ params = {
     "title": 1,
     "authors": 1,
     "download_count": 1,
-    "formats":1
+    "formats": 1
 }
 
 books_collection, _ = connect_to_mongo()
 
+# connect to redis in docker
+
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+
 def search_ctrl(query_str, params):
     result = []
     print("searching for jhhhhhhhhh: ", query_str)
+    # check if the query is already in the cache
+    if r.exists(query_str):
+        print("query found in cache")
+        return json.loads(r.get(query_str))
 
     # Open the existing index
-    whoosh_path = pathlib.Path(__file__).parent.parent.parent.parent / "whoosh_index"
+    whoosh_path = pathlib.Path(
+        __file__).parent.parent.parent.parent / "whoosh_index"
     print(whoosh_path)
     current_path = str(pathlib.Path(__file__).parent)
     whoosh_path = str(whoosh_path)
@@ -66,7 +78,11 @@ def search_ctrl(query_str, params):
 
     data = ['Résultats de la recherche...', result]
 
+    # save the result in the cache for 24 hours
+    r.setex(query_str, 60 * 60 * 24, json.dumps(data))
+
     return data
+
 
 if __name__ == "__main__":
     # second parameter is not used yet
