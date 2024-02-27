@@ -20,7 +20,7 @@ params = {
     "title": 1,
     "authors.name": 1,
     "bookshelves": 1,
-    #  "formats": 1
+    "formats": 1
 }
 
 books_collection, _ = connect_to_mongo()
@@ -36,7 +36,7 @@ features = X['authors'] + \
 mlb = MultiLabelBinarizer()
 features_matrix = mlb.fit_transform(features)
 
-num_clusters = 5
+num_clusters = 15
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 X['suggestion_cluster'] = kmeans.fit_predict(features_matrix)
 
@@ -109,9 +109,11 @@ def get_suggestions_for_books(book_ids_str, num_suggestions=3):
             suggestion = books_collection.find_one(
                 {"_id": suggestion_id}, params)
             suggestion["_id"] = str(suggestion["_id"])
-            data.append(suggestion)
+            if suggestion['_id'] not in [book['_id'] for book in data]:
+                data.append(suggestion)
 
         all_suggestions.extend(data)
+        all_suggestions = [i for n, i in enumerate(all_suggestions) if i not in all_suggestions[n + 1:]]
 
     return ["Basé sur vos lectures récentes...", all_suggestions]
 
