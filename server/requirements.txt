@@ -13,3 +13,4 @@ pandas
 whoosh
 flask-cors
 numpy
+locust

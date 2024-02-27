@@ -1,7 +1,37 @@
-from schema import schema_definition
+# from schema import schema_definition
 from pymongo import MongoClient
 import requests
+import pathlib
 
+schema = {
+    "id": int,
+    "title": str,
+    "authors": [{
+        "name": str,
+        "birth_year": int,
+        "death_year": int
+    }],
+    "translators": list,
+    "subjects": [str],
+    "bookshelves": list,
+    "languages": [str],
+    "copyright": bool,
+    "media_type": str,
+    "formats": {
+        "text/html": str,
+        "text/html; charset=us-ascii": {
+            "url": str,
+            "content" : str
+        },
+        "application/epub+zip": str,
+        "application/x-mobipocket-ebook": str,
+        "application/rdf+xml": str,
+        "image/jpeg": str,
+        "application/octet-stream": str,
+        "text/plain; charset=us-ascii": str
+    },
+    "download_count": int
+}
 
 
 def main():
@@ -18,7 +48,8 @@ def main():
     collection = db['books']
 
     # Read books_ids from the file
-    with open("./books_ids.txt", "r") as file:
+    books_id_path = pathlib.Path(__file__).parent / "books_ids.txt"
+    with open(books_id_path, "r") as file:
         books_ids = file.read().splitlines()
 
     for book_id in books_ids:
@@ -30,7 +61,7 @@ def main():
             book_info = get_book_info(book_id)
 
             # Validate the received data against the schema
-            if all(key in book_info for key in schema_definition.schema.keys()):
+            if all(key in book_info for key in schema.keys()):
                 # Replace the URL with content for "text/plain; charset=us-ascii" format
                 url = book_info["formats"]["text/plain; charset=us-ascii"]
                 response = requests.get(url)
