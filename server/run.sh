@@ -1,4 +1,4 @@
-
+#!/bin/bash
 docker pull redis
 
 if [ "$(docker ps -q -f name=my-redis-container)" ]; then

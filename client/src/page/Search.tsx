@@ -14,7 +14,7 @@ import Loader from '../ui/loader'
 const Search = () => {
     const [searchValue, setSearchValue] = useState('')
     //const navigate = useNavigate()
-    const userBooks: any = localStorage.getItem('user_books')
+    const userBooks: string | null = localStorage.getItem('user_books')
 
     const [optionSelected, setOptionSelected] = useState<optionSelected[]>([])
 
@@ -35,6 +35,10 @@ const Search = () => {
     const [suggestions, setSuggestions] = useState<BookProperties[] | null>(
         null
     )
+
+    const [suggestedByReading, setSuggestedByReading] = useState<
+        BookProperties[] | null
+    >(null)
 
     const [booksByGenre, setBooksByGenre] = useState<BookProperties[] | null>(
         null
@@ -119,14 +123,33 @@ const Search = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            setSuggestions(await fetchBooks('random_books'))
-            setMostDownloaded(await fetchBooks('most_downloaded'))
+            if (suggestions === null)
+                setSuggestions(await fetchBooks('random_books'))
+            if (mostDownloaded === null)
+                setMostDownloaded(await fetchBooks('most_downloaded'))
+            if (!!userBooks && continueReading === null)
+                setContinueReading(
+                    await fetchBooks('continue_reading?book_id=' + userBooks)
+                )
+
+            if (suggestedByReading === null && !!userBooks) {
+                console.log(userBooks)
+                setSuggestedByReading(
+                    await fetchBooks('suggestions?book_id=' + userBooks)
+                )
+            }
         }
 
         fetch().catch(/**/)
-    }, [])
+    }, [
+        continueReading,
+        mostDownloaded,
+        suggestedByReading,
+        suggestions,
+        userBooks,
+    ])
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchReading = async () => {
             const response = await fetchBooks(
                 'continue_reading?book_id=' + userBooks
@@ -135,8 +158,8 @@ const Search = () => {
             setContinueReading(response)
         }
 
-        if (userBooks && continueReading === null) fetchReading().catch(/***/)
-    }, [continueReading, userBooks])
+        if (userBooks && continueReading === null) fetchReading().catch()
+    }, [continueReading, userBooks])*/
 
     useEffect(() => {
         const fetchBooksByGenre = async () => {
@@ -310,7 +333,15 @@ const Search = () => {
                     {!!userBooks && (
                         <Grid>
                             {continueReading?.map((c) => {
-                                return <Card cardProperties={c} key={c._id} />
+                                return (
+                                    <Card
+                                        cardProperties={c}
+                                        key={c._id}
+                                        isDeletable={true}
+                                        continueReading={continueReading}
+                                        setContinueReading={setContinueReading}
+                                    />
+                                )
                             })}
                         </Grid>
                     )}
@@ -318,6 +349,21 @@ const Search = () => {
                         <p className="pt-20">Vous n'avez encore rien lu..</p>
                     )}
                 </div>
+
+                {/* Suggested to user based on his reading */}
+                {!!userBooks && (
+                    <div className="mt-10">
+                        <h3 className="text-left pl-10 font-bold text-xl">
+                            Parce que vous avez lu récemment...
+                        </h3>
+
+                        <Grid>
+                            {suggestedByReading?.map((c) => {
+                                return <Card cardProperties={c} key={c._id} />
+                            })}
+                        </Grid>
+                    </div>
+                )}
             </div>
             <ToastContainer position="bottom-right" />
         </>
