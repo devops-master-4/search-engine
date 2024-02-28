@@ -96,8 +96,8 @@ const Search = () => {
             }
 
             if (response) {
-                setSearchedBook(response)
                 setIsFetching(false)
+                setSearchedBook(response)
             }
         }
 
@@ -125,15 +125,16 @@ const Search = () => {
         const fetch = async () => {
             if (suggestions === null)
                 setSuggestions(await fetchBooks('random_books'))
+
             if (mostDownloaded === null)
                 setMostDownloaded(await fetchBooks('most_downloaded'))
+
             if (!!userBooks && continueReading === null)
                 setContinueReading(
                     await fetchBooks('continue_reading?book_id=' + userBooks)
                 )
 
             if (suggestedByReading === null && !!userBooks) {
-                console.log(userBooks)
                 setSuggestedByReading(
                     await fetchBooks('suggestions?book_id=' + userBooks)
                 )

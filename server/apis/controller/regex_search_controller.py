@@ -12,6 +12,7 @@ params = {
     "authors": 1,
     "download_count": 1,
     "formats": 1
+    "subjects":1
 }
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)

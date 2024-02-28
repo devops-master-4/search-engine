@@ -34,11 +34,15 @@ def regex_search():
         params = request.json
         options = params["options"]
         value = params["value"]
-        print(options, value)
 
-        if r.exists(value):
+        options_keys = "".join(options)
+
+        if r.exists(value + options_keys):
             print("query found in cache")
-            return json.loads(r.get(value))
+            data = json.loads(r.get(value+options_keys))
+
+            return jsonify({"status": "success", "data": data})
+            #return json.loads(r.get(value))
 
         query = {
             "$or": [
@@ -53,10 +57,9 @@ def regex_search():
         for res in result:
             res["_id"] = str(res["_id"])
 
-        print("query", result)
         data = ['Résultats de la recherche...', result]
         #  r.setex(query_str, 60 * 60 * 24, json.dumps(data))
-        r.setex(value, 60 * 60 * 24, json.dumps(data))
+        r.setex(value+options_keys, 60 * 60 * 24, json.dumps(data))
 
         return jsonify({"status": "success", "data": data})
     except Exception as e:

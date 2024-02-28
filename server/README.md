@@ -1,13 +1,19 @@
 # Project Name
 
-A brief description of the project.
+A search engine based on `TF-IDF` model.
 
 ## Table of Contents
-
+- [Prerequesites](#prerequesites)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+## Prerequesites
+Before running the project. Make sure you've :
+- python 3.8 or superior
+- docker
+>Note : You need to populate the mongodb server, and cache server. You can run `./run.sh`. This script will download all docker images of the server.
+
 
 ## Installation
 
@@ -53,6 +59,7 @@ _GET_:
 - /search?query=query
 - /most_downloaded
 - /download_epub?book_id=book_id
+- /suggestions?book_id=book_id1,book_id2,...
 
 _POST_:
 

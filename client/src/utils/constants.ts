@@ -60,15 +60,27 @@ export const fetchBooks = async (
                 const cover =
                     book?.formats['image/jpeg'] ||
                     'https://upittpress.org/wp-content/themes/pittspress/images/no_cover_available.png'
+
+                let subjects: string[] = []
+                if (book?.subjects) {
+                    if (Array.isArray(book.subjects)) {
+                        subjects = [...book.subjects]
+                    } else {
+                        subjects.push(book.subjects)
+                    }
+                }
+
                 newBooks.push({
                     _id: book._id,
                     covers: cover,
                     authors: book.authors,
                     title: book.title,
                     theme: themeUser,
+                    subjects: subjects,
                 } as BookProperties)
             })
         }
+
         return newBooks
     } catch (error) {
         console.log(error)
